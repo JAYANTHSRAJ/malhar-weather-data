@@ -1,0 +1,32 @@
+name: Hourly Weather Snapshot
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # every hour at minute 0
+  workflow_dispatch:
+
+jobs:
+  collect-weather:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch weather from Ambient Weather
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          HOUR=$(date +%H)-00
+          DIR=data/device/hourly/$DATE
+          mkdir -p $DIR
+
+          curl -s "https://api.ambientweather.net/v1/devices?apiKey=${{ secrets.API_KEY }}&applicationKey=${{ secrets.APP_KEY }}" \
+          > $DIR/$HOUR.json
+
+      - name: Commit and push
+        run: |
+          git config user.name "weather-bot"
+          git config user.email "weather-bot@users.noreply.github.com"
+          git add .
+          git commit -m "Hourly weather snapshot $(date)" || echo "No changes"
+          git push
