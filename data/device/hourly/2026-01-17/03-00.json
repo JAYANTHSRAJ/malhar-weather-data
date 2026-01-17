@@ -1,1 +1,35 @@
-[{"macAddress":"BC:FF:4D:81:A7:64","lastData":{"dateutc":1768620120000,"tempf":71.4,"humidity":63,"windspeedmph":0.67,"windgustmph":1.12,"maxdailygust":9.17,"winddir":163,"uv":1,"solarradiation":182.49,"hourlyrainin":0,"eventrainin":0,"dailyrainin":0,"weeklyrainin":0.008,"monthlyrainin":0.039,"yearlyrainin":12.791,"totalrainin":12.791,"battout":1,"tempinf":75.9,"humidityin":58,"baromrelin":30.174,"baromabsin":27.501,"feelsLike":71.2,"dewPoint":58.14,"feelsLikein":75.9,"dewPointin":60,"lastRain":"2026-01-12T13:09:00.000Z","tz":"Asia/Calcutta","date":"2026-01-17T03:22:00.000Z"},"info":{"name":"GoodEarth_Tarana","coords":{"coords":{"lat":12.8852,"lon":77.4664},"address":"VFX6+8WG Ravish kumar, BSM Extension, Kengeri Satellite Town, Challegatta, Bengaluru, Karnataka 560060, India","location":"Challegatta","elevation":802.4891357421875,"address_components":[{"long_name":"Ravish kumar","short_name":"Ravish kumar","types":["establishment","park","point_of_interest"]},{"long_name":"VFX6+8WG","short_name":"VFX6+8WG","types":["plus_code"]},{"long_name":"BSM Extension","short_name":"BSM Extension","types":["political","sublocality","sublocality_level_2"]},{"long_name":"Kengeri Satellite Town","short_name":"Kengeri Satellite Town","types":["political","sublocality","sublocality_level_1"]},{"long_name":"Challegatta","short_name":"Challegatta","types":["locality","political"]},{"long_name":"Bengaluru Urban","short_name":"Bengaluru Urban","types":["administrative_area_level_3","political"]},{"long_name":"Bangalore Division","short_name":"Bangalore Division","types":["administrative_area_level_2","political"]},{"long_name":"Karnataka","short_name":"KA","types":["administrative_area_level_1","political"]},{"long_name":"India","short_name":"IN","types":["country","political"]},{"long_name":"560060","short_name":"560060","types":["postal_code"]}],"geo":{"type":"Point","coordinates":[77.4664,12.8852]}}}}]
+{
+  "timestamp": "2026-01-17T03:00:00",
+  "outdoor": {
+    "temperature": 17.7,
+    "feelsLike": 17.7,
+    "dewPoint": 13.5,
+    "humidity": 76.0
+  },
+  "wind": {
+    "speed": 1.8,
+    "gust": 5.4,
+    "maxDailyGust": 14.8,
+    "directionDeg": 131
+  },
+  "rain": {
+    "hourly": 0.0,
+    "daily": 0.0,
+    "weekly": 0.2,
+    "monthly": 1.0,
+    "yearly": 324.9,
+    "total": 324.9
+  },
+  "pressure": {
+    "relative": 1018.3,
+    "absolute": 927.9
+  },
+  "solar": {
+    "uv": 0,
+    "radiation": 0.0
+  },
+  "indoor": {
+    "temperature": 24.1,
+    "humidity": 56.0
+  }
+}

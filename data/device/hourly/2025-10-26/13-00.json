@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-10-26T13:00:00",
+  "outdoor": {
+    "temperature": 28.9,
+    "feelsLike": 30.2,
+    "dewPoint": 19.0,
+    "humidity": 56.0
+  },
+  "wind": {
+    "speed": 5.2,
+    "gust": 9.4,
+    "maxDailyGust": 22.0,
+    "directionDeg": 267
+  },
+  "rain": {
+    "hourly": 0.0,
+    "daily": 0.0,
+    "weekly": 10.9,
+    "monthly": 139.7,
+    "yearly": 319.8,
+    "total": 319.8
+  },
+  "pressure": {
+    "relative": 1016.1,
+    "absolute": 925.6
+  },
+  "solar": {
+    "uv": 2,
+    "radiation": 281.9
+  },
+  "indoor": {
+    "temperature": 27.0,
+    "humidity": 62.0
+  }
+}
