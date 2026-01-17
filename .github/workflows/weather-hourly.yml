@@ -1,8 +1,8 @@
-name: Hourly Weather Snapshot
+name: Hourly Weather Snapshot (Clean)
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 * * * *"   # runs hourly (UTC)
   workflow_dispatch:
 
 jobs:
@@ -13,20 +13,73 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch weather from Ambient Weather
+      - name: Fetch, normalize & store weather (IST hour bucket)
         run: |
-          DATE=$(date +%Y-%m-%d)
-          HOUR=$(date +%H)-00
-          DIR=data/device/hourly/$DATE
-          mkdir -p $DIR
+          set -e
 
-          curl -s "https://api.ambientweather.net/v1/devices?apiKey=${{ secrets.API_KEY }}&applicationKey=${{ secrets.APP_KEY }}" \
-          > $DIR/$HOUR.json
+          RAW=$(curl -s "https://api.ambientweather.net/v1/devices?apiKey=${{ secrets.API_KEY }}&applicationKey=${{ secrets.APP_KEY }}")
+
+          # Sensor timestamp (UTC)
+          SENSOR_DATE=$(echo "$RAW" | jq -r '.[0].lastData.date')
+
+          # Convert to IST
+          IST_DATE=$(date -d "$SENSOR_DATE +5 hours 30 minutes" +"%Y-%m-%d")
+          IST_HOUR=$(date -d "$SENSOR_DATE +5 hours 30 minutes" +"%H")
+
+          DIR="data/device/hourly/$IST_DATE"
+          FILE="$DIR/$IST_HOUR-00.json"
+
+          mkdir -p "$DIR"
+
+          # Build CLEAN Quick View snapshot
+          echo "$RAW" | jq '.[0].lastData | {
+            timestamp: .date,
+
+            outdoor: {
+              temperature: ((.tempf - 32) * 5 / 9),
+              feelsLike: ((.feelsLike - 32) * 5 / 9),
+              dewPoint: ((.dewPoint - 32) * 5 / 9)
+            },
+
+            wind: {
+              speed: (.windspeedmph * 1.60934),
+              gust: (.windgustmph * 1.60934),
+              maxDailyGust: (.maxdailygust * 1.60934),
+              direction: .winddir
+            },
+
+            rain: {
+              rate: (.hourlyrainin * 25.4),
+              daily: (.dailyrainin * 25.4),
+              weekly: (.weeklyrainin * 25.4)
+            },
+
+            pressure: {
+              relative: .baromrelin,
+              absolute: .baromabsin
+            },
+
+            humidity: {
+              outdoor: .humidity,
+              indoor: .humidityin
+            },
+
+            indoor: {
+              temperature: ((.tempinf - 32) * 5 / 9),
+              feelsLike: ((.feelsLikein - 32) * 5 / 9),
+              dewPoint: ((.dewPointin - 32) * 5 / 9)
+            },
+
+            solar: {
+              uv: .uv,
+              radiation: .solarradiation
+            }
+          }' > "$FILE"
 
       - name: Commit and push
         run: |
           git config user.name "weather-bot"
           git config user.email "weather-bot@users.noreply.github.com"
-          git add .
-          git commit -m "Hourly weather snapshot $(date)" || echo "No changes"
+          git add data/device/hourly
+          git commit -m "Hourly clean snapshot (IST) $(date -u)" || echo "No changes"
           git push
