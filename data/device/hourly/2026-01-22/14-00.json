@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-01-22T08:31:00.000Z",
+  "outdoor": {
+    "temperature": 25.777777777777782,
+    "feelsLike": 25.244444444444444,
+    "dewPoint": 7.822222222222221
+  },
+  "wind": {
+    "speed": 0.3540548,
+    "gust": 1.8024608000000002,
+    "maxDailyGust": 27.7128348,
+    "direction": 72
+  },
+  "rain": {
+    "rate": 0,
+    "daily": 0,
+    "weekly": 0
+  },
+  "pressure": {
+    "relative": 30.103,
+    "absolute": 27.43
+  },
+  "humidity": {
+    "outdoor": 32,
+    "indoor": 37
+  },
+  "indoor": {
+    "temperature": 24.499999999999996,
+    "feelsLike": 23.944444444444443,
+    "dewPoint": 8.833333333333334
+  },
+  "solar": {
+    "uv": 5,
+    "radiation": 524.63
+  }
+}
