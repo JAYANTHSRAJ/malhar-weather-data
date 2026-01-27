@@ -1,0 +1,37 @@
+{
+  "bucketHour": "2025-08-27 02:00",
+  "sensorTimestamp": null,
+  "backfilled": true,
+  "outdoor": {
+    "temperature": 26.1,
+    "feelsLike": 26.6,
+    "dewPoint": 20.2,
+    "humidity": 70.0
+  },
+  "wind": {
+    "speed": 10.8,
+    "gust": 18.4,
+    "maxDailyGust": 31.3,
+    "direction": 180.0
+  },
+  "rain": {
+    "rate": 0.0,
+    "daily": 0.0,
+    "weekly": 0.0
+  },
+  "pressure": {
+    "relative": 1011.2,
+    "absolute": 920.7
+  },
+  "humidity": {
+    "outdoor": 70.0,
+    "indoor": 68.0
+  },
+  "indoor": {
+    "temperature": 27.2
+  },
+  "solar": {
+    "uv": 3.0,
+    "radiation": 393.2
+  }
+}

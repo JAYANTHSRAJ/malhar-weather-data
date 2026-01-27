@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-01-22T10:00:00+05:30",
+  "source": "sheet-backfill",
+  "outdoor": {
+    "temperature": 23.1,
+    "feelsLike": 22.5,
+    "dewPoint": 9.1,
+    "humidity": 41.0
+  },
+  "wind": {
+    "speed": 2.0,
+    "gust": 3.6,
+    "maxDailyGust": 27.7,
+    "directionDeg": 96
+  },
+  "rain": {
+    "hourly": 0.0,
+    "daily": 0.0,
+    "weekly": 0.0,
+    "monthly": 1.0,
+    "yearly": 324.9,
+    "total": 324.9
+  },
+  "pressure": {
+    "relative": 1022.9,
+    "absolute": 932.4
+  },
+  "solar": {
+    "uv": 4,
+    "radiation": 464.1
+  },
+  "indoor": {
+    "temperature": 24.3,
+    "humidity": 41.0
+  }
+}
