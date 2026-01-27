@@ -1,85 +1,90 @@
-name: Hourly Weather Snapshot (Clean)
+name: Hourly Weather Snapshot (Guaranteed 24)
 
 on:
   schedule:
-    - cron: "0 * * * *"   # runs hourly (UTC)
+    - cron: "0 * * * *"
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   collect-weather:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Fetch, normalize & store weather (IST hour bucket)
+      - name: Fetch & store hourly snapshot (IST bucket)
         run: |
           set -e
 
-          RAW=$(curl -s "https://api.ambientweather.net/v1/devices?apiKey=${{ secrets.API_KEY }}&applicationKey=${{ secrets.APP_KEY }}")
-
-          # Sensor timestamp (UTC)
-          SENSOR_DATE=$(echo "$RAW" | jq -r '.[0].lastData.date')
-
-          # Convert to IST
-          IST_DATE=$(date -d "$SENSOR_DATE +5 hours 30 minutes" +"%Y-%m-%d")
-          IST_HOUR=$(date -d "$SENSOR_DATE +5 hours 30 minutes" +"%H")
+          NOW_IST=$(TZ=Asia/Kolkata date +"%Y-%m-%d %H:00")
+          IST_DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
+          IST_HOUR=$(TZ=Asia/Kolkata date +"%H")
 
           DIR="data/device/hourly/$IST_DATE"
           FILE="$DIR/$IST_HOUR-00.json"
 
           mkdir -p "$DIR"
 
-          # Build CLEAN Quick View snapshot
-          echo "$RAW" | jq '.[0].lastData | {
-            timestamp: .date,
+          RAW=$(curl -sf "https://api.ambientweather.net/v1/devices?apiKey=${{ secrets.API_KEY }}&applicationKey=${{ secrets.APP_KEY }}")
 
-            outdoor: {
-              temperature: ((.tempf - 32) * 5 / 9),
-              feelsLike: ((.feelsLike - 32) * 5 / 9),
-              dewPoint: ((.dewPoint - 32) * 5 / 9)
-            },
+          SENSOR_DATE=$(echo "$RAW" | jq -r '.[0].lastData.date // empty')
 
-            wind: {
-              speed: (.windspeedmph * 1.60934),
-              gust: (.windgustmph * 1.60934),
-              maxDailyGust: (.maxdailygust * 1.60934),
-              direction: .winddir
-            },
+          echo "$RAW" | jq --arg bucket "$NOW_IST" --arg sensor "$SENSOR_DATE" '
+            .[0].lastData as $d |
+            {
+              bucketHour: $bucket,
+              sensorTimestamp: $sensor,
+              stale: ($sensor == null),
 
-            rain: {
-              rate: (.hourlyrainin * 25.4),
-              daily: (.dailyrainin * 25.4),
-              weekly: (.weeklyrainin * 25.4)
-            },
+              outdoor: {
+                temperature: (($d.tempf - 32) * 5 / 9),
+                feelsLike: (($d.feelsLike - 32) * 5 / 9),
+                dewPoint: (($d.dewPoint - 32) * 5 / 9)
+              },
 
-            pressure: {
-              relative: .baromrelin,
-              absolute: .baromabsin
-            },
+              wind: {
+                speed: ($d.windspeedmph * 1.60934),
+                gust: ($d.windgustmph * 1.60934),
+                maxDailyGust: ($d.maxdailygust * 1.60934),
+                direction: $d.winddir
+              },
 
-            humidity: {
-              outdoor: .humidity,
-              indoor: .humidityin
-            },
+              rain: {
+                rate: ($d.hourlyrainin * 25.4),
+                daily: ($d.dailyrainin * 25.4),
+                weekly: ($d.weeklyrainin * 25.4)
+              },
 
-            indoor: {
-              temperature: ((.tempinf - 32) * 5 / 9),
-              feelsLike: ((.feelsLikein - 32) * 5 / 9),
-              dewPoint: ((.dewPointin - 32) * 5 / 9)
-            },
+              pressure: {
+                relative: $d.baromrelin,
+                absolute: $d.baromabsin
+              },
 
-            solar: {
-              uv: .uv,
-              radiation: .solarradiation
+              humidity: {
+                outdoor: $d.humidity,
+                indoor: $d.humidityin
+              },
+
+              indoor: {
+                temperature: (($d.tempinf - 32) * 5 / 9),
+                feelsLike: (($d.feelsLikein - 32) * 5 / 9),
+                dewPoint: (($d.dewPointin - 32) * 5 / 9)
+              },
+
+              solar: {
+                uv: $d.uv,
+                radiation: $d.solarradiation
+              }
             }
-          }' > "$FILE"
+          ' > "$FILE"
 
       - name: Commit and push
         run: |
           git config user.name "weather-bot"
           git config user.email "weather-bot@users.noreply.github.com"
           git add data/device/hourly
-          git commit -m "Hourly clean snapshot (IST) $(date -u)" || echo "No changes"
+          git commit -m "Hourly snapshot $(TZ=Asia/Kolkata date '+%Y-%m-%d %H:00 IST')" || echo "No changes"
           git push
